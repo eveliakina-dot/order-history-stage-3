@@ -1,0 +1,108 @@
+# Source: TechShop OpenAPI 3.0 spec
+# Endpoint: POST /orders
+# Response: 201 Created — application/json
+# Schema: OrderResponse
+
+components:
+  schemas:
+
+    OrderStatus:
+      type: string
+      enum:
+        - PENDING
+        - CONFIRMED
+        - PROCESSING
+        - SHIPPED
+        - DELIVERED
+        - CANCELLED
+
+    OrderItemResponse:
+      type: object
+      required:
+        - productId
+        - productName
+        - quantity
+        - unitPrice
+        - lineTotal
+      properties:
+        productId:
+          type: string
+          format: uuid
+        variantId:
+          type: string
+          format: uuid
+        productName:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+          format: float
+        lineTotal:
+          type: number
+          format: float
+
+    ShippingAddressResponse:
+      type: object
+      required:
+        - line1
+        - city
+        - postcode
+        - country
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        county:
+          type: string
+        postcode:
+          type: string
+        country:
+          type: string
+
+    OrderResponse:
+      type: object
+      required:
+        - orderId
+        - status
+        - createdAt
+        - totalAmount
+        - items
+        - shippingAddress
+        - appliedPromoCode
+      properties:
+        orderId:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: Order creation timestamp
+        totalAmount:
+          type: number
+          format: float
+          description: Total order value including any discount
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemResponse'
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddressResponse'
+        appliedPromoCode:
+          type: string
+          nullable: true
+          description: >
+            Promo code applied to the order. Present in every response —
+            null when no promo code was used.
+        estimatedDelivery:
+          type: string
+          format: date
+          description: Expected delivery date
+        customerNote:
+          type: string
+          description: Optional note left by the customer

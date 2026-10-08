@@ -1,0 +1,85 @@
+# Source: TechShop OpenAPI 3.0 spec
+# Endpoint: GET /orders
+# Schema: OrdersListResponse (paginated list of the current user's orders)
+
+components:
+  schemas:
+
+    OrderStatus:
+      type: string
+      enum:
+        - pending
+        - confirmed
+        - processing
+        - shipped
+        - delivered
+        - cancelled
+
+    Money:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: number
+          description: Decimal amount in the given currency
+        currency:
+          type: string
+          description: ISO 4217 code, e.g. GBP
+
+    OrderSummary:
+      type: object
+      required:
+        - orderNumber
+        - placedAt
+        - status
+        - total
+        - itemCount
+      properties:
+        orderNumber:
+          type: string
+          description: Human-readable order reference, e.g. TS-240311-7731
+        placedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        total:
+          $ref: '#/components/schemas/Money'
+        itemCount:
+          type: integer
+        trackingNumber:
+          type: string
+          description: Carrier tracking reference, assigned after dispatch
+        estimatedDelivery:
+          type: string
+          format: date
+        cancellationReason:
+          type: string
+          nullable: true
+
+    OrdersListResponse:
+      type: object
+      required:
+        - items
+        - page
+        - pageSize
+        - totalItems
+        - nextPage
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderSummary'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+          description: Fixed at 10
+        totalItems:
+          type: integer
+        nextPage:
+          type: integer
+          nullable: true
+          description: Page number of the next page; null on the last page
